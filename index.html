@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LoveBloom Birthday Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:Nunito,system-ui,sans-serif;color:#6b2150;min-height:100vh;background:linear-gradient(135deg,#ffd5e7,#ead8ff 55%,#ffe8ef)}
+h1,h2,.hd{font-family:'Dancing Script',cursive;color:#d5418b;font-weight:700;margin:.2em 0}
+header.top{text-align:center;padding:26px 16px 4px}header.top h1{font-size:clamp(36px,9vw,58px);margin:0}
+main{max-width:760px;margin:0 auto;padding:0 14px 60px}
+.card{background:#ffffffe0;border-radius:26px;padding:22px;margin:16px 0;box-shadow:0 18px 45px #bd559930}
+label{display:block;font-weight:700;margin:14px 0 6px;color:#b33d7a}
+input,textarea,select{width:100%;padding:12px;border:1px solid #e5a1c4;border-radius:12px;background:#fff9fc;color:#874467;font:inherit}
+textarea{min-height:84px}input:focus,textarea:focus,select:focus{outline:3px solid #ffacd0}
+.b{border:0;border-radius:26px;background:linear-gradient(135deg,#ff69a8,#c45bdf);color:#fff;font:700 16px Nunito,sans-serif;padding:13px 22px;margin:10px 6px 0 0;cursor:pointer;box-shadow:0 6px 0 #a83e7d;transition:.15s}
+.b:active{transform:translateY(4px);box-shadow:0 2px 0 #a83e7d}.b:disabled{opacity:.5}.b.alt{background:#fff;color:#c4398a;box-shadow:0 6px 0 #e9a7cb}
+small{color:#9d6684}#thumbs img{width:54px;height:54px;object-fit:cover;border-radius:10px;margin:6px 6px 0 0}.status{margin-top:12px;font-weight:700}
+.link{word-break:break-all;background:#fff0f7;padding:12px;border-radius:12px}
+/* player */
+#player{position:fixed;inset:0;z-index:50;display:none;color:var(--ink);overflow:hidden;background:radial-gradient(circle at 20% 8%,#fff9,transparent 45%),linear-gradient(160deg,var(--c),#fff 55%,var(--c))}
+#player.open{display:block}#fx{position:absolute;inset:0;pointer-events:none;z-index:6}#stage{position:absolute;inset:0;z-index:2}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:safe center;padding:64px 22px 96px;text-align:center;opacity:0;pointer-events:none;transform:scale(.92) translateX(50px);transition:.6s cubic-bezier(.2,.8,.2,1);overflow:auto}
+.slide.on{opacity:1;pointer-events:auto;transform:none}.slide.past{transform:scale(.92) translateX(-50px)}
+.slide>*{max-width:560px;width:100%}.slide h2{font-size:clamp(32px,8vw,48px)}
+.slide.on .rise{animation:rise .8s both;animation-delay:calc(var(--i,0)*.12s)}
+@keyframes rise{from{opacity:0;transform:translateY(26px) scale(.95)}to{opacity:1;transform:none}}
+#tb{position:absolute;top:10px;left:10px;right:10px;z-index:10;display:flex;gap:8px;justify-content:space-between}
+#tb .b{padding:8px 14px;margin:0;font-size:14px;box-shadow:0 3px 0 #a83e7d}#tb .b.alt{box-shadow:0 3px 0 #e9a7cb}
+.viewer #tb .pv{display:none}.viewer #builder,.viewer header.top{display:none}
+#bar{position:absolute;bottom:20px;left:0;right:0;z-index:10;display:flex;justify-content:center;align-items:center;gap:14px}
+#bar button{width:46px;height:46px;border-radius:50%;border:0;background:#fff;color:var(--a);font-size:20px;box-shadow:0 4px 14px #0002;cursor:pointer}
+#dots{display:flex;gap:6px}#dots i{width:8px;height:8px;border-radius:9px;background:#fff;box-shadow:0 0 0 1px var(--a);transition:.3s}#dots i.on{width:22px;background:var(--a)}
+.big{font-size:clamp(34px,10vw,60px);line-height:1.05}.t{font-size:19px;line-height:1.6;min-height:3em}
+.ring{width:150px;height:150px;border-radius:50%;border:6px solid #fff;background:#fff center/cover;box-shadow:0 12px 30px #0003;margin:0 auto 14px;display:grid;place-items:center;font-size:60px;animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.balloons span{position:absolute;bottom:-80px;font-size:54px;animation:up 9s linear infinite;z-index:1}
+@keyframes up{to{transform:translateY(-115vh) rotate(12deg)}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;perspective:800px}
+.fc{height:104px;cursor:pointer}.fc .in{position:relative;width:100%;height:100%;transition:.7s;transform-style:preserve-3d}.fc.flip .in{transform:rotateY(180deg)}
+.fc .in>div{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;display:grid;place-items:center;padding:10px;font-size:14.5px;box-shadow:0 8px 20px #0002}
+.fc .f{background:linear-gradient(135deg,var(--a),var(--b));font-size:34px!important;color:#fff}.fc .k{background:#fff;transform:rotateY(180deg);font-weight:700}
+.stack{position:relative;height:300px;margin:6px auto;cursor:pointer}
+.pol{position:absolute;left:50%;top:0;width:210px;padding:10px 10px 38px;background:#fff;box-shadow:0 12px 28px #0003;transition:.55s cubic-bezier(.3,1.3,.4,1);transform:translateX(-50%) rotate(var(--r))}
+.pol div{height:210px;background:#fcd center/cover;display:grid;place-items:center;font-size:70px}.pol.fly{transform:translate(-190%,40px) rotate(-40deg);opacity:0}
+.env{position:relative;width:280px;height:180px;margin:80px auto 24px;cursor:pointer}
+.env .pk{position:absolute;inset:0;background:var(--a);border-radius:6px 6px 14px 14px;z-index:3;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);filter:brightness(.92)}
+.env .bk{position:absolute;inset:0;background:var(--b);border-radius:8px}
+.env .flap{position:absolute;left:0;right:0;top:0;height:95px;background:var(--a);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:.6s;z-index:4}
+.env.open .flap{transform:perspective(500px) rotateX(180deg);z-index:1}.seal{position:absolute;left:50%;top:70px;margin-left:-16px;font-size:30px;z-index:5;transition:.3s}.env.open .seal{opacity:0;transform:scale(2)}
+.lt{position:absolute;left:12px;right:12px;bottom:10px;height:150px;background:#fffdf6;border-radius:6px;z-index:2;transition:transform 1s .4s;padding:14px;font:700 22px 'Dancing Script',cursive;text-align:center;color:var(--a);box-shadow:0 4px 14px #0002}.paper{background:#fffdf6;border-radius:10px;padding:24px 22px;font:600 24px/1.55 'Dancing Script',cursive;text-align:left;box-shadow:0 14px 34px #0003;border-left:6px solid var(--a);min-height:140px}
+.env.open .lt{transform:translateY(-80px)}
+.cake{margin:24px auto 12px}.cd{display:flex;gap:16px;justify-content:center;width:150px;margin:0 auto}
+.cd i{width:8px;height:34px;background:repeating-linear-gradient(#fff 0 6px,var(--a) 6px 12px);border-radius:3px;position:relative}
+.cd u{position:absolute;top:-17px;left:-2px;width:12px;height:18px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#ffb300;box-shadow:0 0 16px 5px #ffd54f;animation:fl .25s alternate infinite;transition:.4s}
+.out u{opacity:0}@keyframes fl{to{transform:scale(1.15,.9) rotate(5deg)}}
+.l1{width:150px;height:46px;margin:0 auto;background:var(--a);border-radius:14px 14px 0 0}.l2{width:220px;height:58px;margin:0 auto;background:var(--b);border-radius:0 0 18px 18px;box-shadow:0 12px 0 #fff9}
+.hg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.hh{font-size:70px;color:var(--a);cursor:pointer;animation:bob 2.4s ease-in-out infinite;animation-delay:calc(var(--i)*.3s);filter:drop-shadow(0 6px 8px #0003);user-select:none}
+.slide.on .hh.pop{animation:pop .5s ease-out forwards!important;pointer-events:none}@keyframes pop{35%{transform:scale(1.7);opacity:1}100%{transform:scale(2.4);opacity:0}}.msg{background:#fff;border-radius:18px;padding:16px;min-height:64px;margin-top:14px;font-weight:700;box-shadow:0 8px 20px #0002}
+.lock{font-size:70px;animation:bob 2s infinite}.sec p{background:#fff;border-radius:16px;padding:14px;margin:10px 0;animation:rise .8s both;line-height:1.55;box-shadow:0 8px 20px #0002}
+.sc{perspective:900px;height:220px;margin:8px auto 4px}.orb{width:110px;height:150px;position:relative;transform-style:preserve-3d;animation:spin 20s linear infinite;margin:26px auto}
+.orb div{position:absolute;inset:0;border-radius:12px;border:4px solid #fff;background:#fcd center/cover;display:grid;place-items:center;font-size:40px;box-shadow:0 8px 20px #0003;transform:rotateY(calc(var(--k)*var(--s))) translateZ(170px)}
+@keyframes spin{to{transform:rotateY(360deg)}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+<header class="top"><h1>🎀 LoveBloom Birthday Studio 💗</h1><p>Build an animated birthday surprise with your photos and her song ✨</p></header>
+<main>
+<section class="card" id="builder">
+<h2>Build her birthday website</h2>
+<form id="projectForm">
+<label>Your name</label><input name="boy" required maxlength="80" placeholder="Your name">
+<label>Girlfriend's name</label><input name="girl" required maxlength="80" placeholder="Her name">
+<label>Birthday heading</label><input name="heading" value="Happy Birthday My Princess!">
+<label>Theme</label><select name="theme"><option>Pink Princess</option><option>Purple Dreams</option><option>Peach Romance</option><option>Dreamy Blue</option></select>
+<label>Slide 2 — Welcome paragraph</label><textarea name="welcome">Today is the birthday of my favourite person. You make my world beautiful.</textarea>
+<label>Slide 3 — Reasons (one per line)</label><textarea name="reasons">Your smile makes me happy.
+Your voice is my favourite sound.
+You make my days brighter.
+Your eyes are my universe.
+Your little habits are adorable.
+Simply because you are YOU!</textarea>
+<label>Slide 4 — Memories paragraph</label><textarea name="memories">Every little conversation, laugh and silly moment with you is a beautiful memory.</textarea>
+<label>Slide 5 — Love letter</label><textarea name="loveletter">I may not always have perfect words, but I hope you know how special you are.</textarea>
+<label>Slide 6 — Birthday wishes</label><textarea name="wishes">May all your dreams come true. May your life be full of love and happiness.</textarea>
+<label>Slide 7 — Gift-heart messages (one per line)</label><textarea name="heartMessages">Your smile is my sunshine.
+You are my favourite notification.
+I would choose you in every lifetime.
+Your happiness means everything.
+You make ordinary days magical.
+I fall in love with you every day.</textarea>
+<label>Slide 8 — Secret paragraphs (separate with a blank line)</label><textarea name="letters">You are one of the most beautiful things that has ever happened to me.
+
+I love your smile, your voice and every little thing about you.
+
+I wish to be beside you through every celebration and every difficult day.
+
+You will always be my favourite person. I love you endlessly.</textarea>
+<label>Slide 10 — Final confession</label><textarea name="finalText">Happy Birthday my princess! You are my favourite person and my most beautiful blessing. I LOVE YOU!</textarea>
+<label>Upload photos (up to 8)</label><input id="photos" name="photos" type="file" accept="image/*" multiple><div id="thumbs"></div>
+<label>Upload a song (max 12 MB) — it keeps playing through every slide</label><input id="song" name="song" type="file" accept="audio/*">
+<small>Only upload photos and music you have permission to use.</small><br>
+<button type="button" class="b" id="previewBtn">▶ Preview the full surprise</button>
+</form>
+<div class="status" id="status" role="status"></div>
+</section>
+<section class="card" id="done" hidden></section>
+</main>
+
+<div id="player">
+ <canvas id="fx"></canvas><div id="stage"></div>
+ <div id="tb"><button class="b alt pv" id="edit">← Edit</button><button class="b" id="mute" style="margin-left:auto">🔊</button><button class="b pv" id="pay">✓ Looks perfect — Pay &amp; get link</button></div>
+ <div id="bar"><button id="prev" aria-label="Previous">‹</button><div id="dots"></div><button id="next" aria-label="Next">›</button></div>
+ <audio id="au" loop></audio>
+</div>
+<script id="giftdata" type="application/json"></script>
+<script>
+/* ===== SETTINGS ===== */
+const CFG={
+ USE_SERVER:true,      // true = safe mode: payment is checked by your Netlify server functions
+ RAZORPAY_KEY:"",      // only used when USE_SERVER is false (simple test mode)
+ AMOUNT_INR:199,       // only used when USE_SERVER is false. Real price: set PRICE_INR in Netlify
+ BUSINESS:"LoveBloom Studio"
+};
+/* ==================== */
+const $=s=>document.querySelector(s),esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const lines=s=>(s||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);
+const TH={"Pink Princess":["#ff5fa2","#c45bdf","#ffdcec","#6b2150"],"Purple Dreams":["#8f63ff","#ff7ad9","#e6dcff","#43246b"],"Peach Romance":["#ff7a59","#ffb347","#ffe3d2","#6b3022"],"Dreamy Blue":["#3d94ff","#8f7bff","#d9ecff","#22406b"]};
+const S={photos:[],song:null};let slides=[],cur=0,preview=true,ps=[],W,H,amb;
+const P=$('#player'),stage=$('#stage'),au=$('#au'),cv=$('#fx'),cx=cv.getContext('2d');
+/* particles */
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight}addEventListener('resize',rs);rs();
+function burst(x,y,n=30,e){for(let i=0;i<n;i++){const a=Math.random()*6.28,v=2+Math.random()*5;ps.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-2,g:.12,dl:.014,l:1,e,c:e?['💗','✨','🌸','💕','⭐'][i%5]:`hsl(${Math.random()*360},90%,65%)`,s:10+Math.random()*8})}}
+function rain(n=50){for(let i=0;i<n;i++)ps.push({x:Math.random()*W,y:-20-Math.random()*200,vx:(Math.random()-.5)*2,vy:2+Math.random()*3,g:0,dl:.003,l:1.6,c:`hsl(${Math.random()*360},90%,65%)`,s:9,r:1})}
+(function lp(){cx.clearRect(0,0,W,H);ps=ps.filter(p=>p.l>0&&p.y<H+40);for(const p of ps){p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.l-=p.dl;cx.globalAlpha=Math.max(0,Math.min(1,p.l));if(p.e){cx.font=p.s*1.5+'px serif';cx.fillText(p.c,p.x,p.y)}else{cx.fillStyle=p.c;p.r?cx.fillRect(p.x,p.y,p.s,p.s*.5):(cx.beginPath(),cx.arc(p.x,p.y,p.s/3,0,6.28),cx.fill())}}cx.globalAlpha=1;requestAnimationFrame(lp)})();
+function tw(el,t,sp=28,cb){el.textContent='';let i=0;const h=setInterval(()=>{el.textContent=t.slice(0,++i);if(i>=t.length){clearInterval(h);cb&&cb()}},sp)}
+/* slides */
+let LD;const adv=e=>{const s=slides[cur];s&&s.e===e&&go(cur+1)};
+function flow(e,left,reveal,gap,after){let t;const bump=()=>{clearTimeout(t);if(!e.isConnected)return;t=setTimeout(()=>{if(slides[cur]&&slides[cur].e!==e)return bump();if(left()){reveal();bump()}else adv(e)},left()?gap:after)};bump();return bump}
+function mk(d){
+ const ph=k=>d.photos.length?d.photos[k%d.photos.length]:null,bg=k=>ph(k)?`style="background-image:url(${ph(k)})"`:'',em=k=>ph(k)?'':'🧸';
+ const R=lines(d.reasons),HM=lines(d.heartMessages),LT=d.letters.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
+ return[
+ {h:`<div class="balloons">${['🎈','💗','🎈','🦋','🎈','💕'].map((b,k)=>`<span style="left:${8+k*17}%;animation-delay:${k*1.3}s">${b}</span>`).join('')}</div>
+  <div class="ring rise" ${bg(0)}>${em(0)}</div><h1 class="big rise" style="--i:1">${esc(d.heading)}</h1>
+  <p class="rise" style="--i:2;font-size:20px">For ${esc(d.girl)}, with all my love — ${esc(d.boy)} 💗</p>
+  <button class="b rise" style="--i:3;width:auto" id="open">Open your gift 🎁</button>`,
+  i:e=>e.querySelector('#open').onclick=()=>{au.play().catch(()=>{});burst(innerWidth/2,innerHeight/2,50,1);rain(40);go(1)}},
+ {h:`<h2 class="rise">Hello, ${esc(d.girl)} 🌸</h2><div class="ring rise" style="--i:1;width:120px;height:120px" ${bg(1)}>${em(1)}</div><p class="t"></p>`,i:e=>tw(e.querySelector('.t'),d.welcome,28,()=>setTimeout(()=>adv(e),3000))},
+ {h:`<h2 class="rise">Why I love you</h2><p class="rise" style="--i:1">Tap each gift 🎁</p><div class="grid">${R.map((t,k)=>`<div class="fc rise" style="--i:${k+2}"><div class="in"><div class="f">🎁</div><div class="k">${esc(t)}</div></div></div>`).join('')}</div>`,
+  i:e=>{const cs=[...e.querySelectorAll('.fc')],nf=()=>cs.filter(c=>!c.classList.contains('flip'));const bump=flow(e,()=>nf().length,()=>{const c=nf()[0],r=c.getBoundingClientRect();c.classList.add('flip');burst(r.x+r.width/2,r.y+r.height/2,12,1)},4500,3500);cs.forEach(c=>c.onclick=ev=>{if(c.classList.contains('flip'))return;c.classList.add('flip');burst(ev.clientX,ev.clientY,12,1);bump()})}},
+ {h:`<h2 class="rise">Our memories</h2><div class="stack rise" style="--i:1">${[0,1,2,3,4].map(k=>`<div class="pol" style="--r:${(k%2?1:-1)*(2+k*2)}deg;z-index:${9-k}"><div ${bg(k)}>${em(k)}</div></div>`).join('')}</div><p class="t rise" style="--i:2;min-height:0">${esc(d.memories)}</p><small>Tap the photos</small>`,
+  i:e=>{const st=e.querySelector('.stack');let n=5;const fly=()=>{const c=[...st.children].sort((a,b)=>b.style.zIndex-a.style.zIndex)[0];c.classList.add('fly');setTimeout(()=>{c.style.zIndex=Math.min(...[...st.children].map(x=>x.style.zIndex))-1;c.classList.remove('fly')},560)};const bump=flow(e,()=>n,()=>{n--;fly()},2600,2400);st.onclick=()=>{if(n>0)n--;fly();bump()}}},
+ {h:`<h2 class="rise">A letter for you 💌</h2><div class="env rise" style="--i:1"><div class="bk"></div><div class="lt">💗 To ${esc(d.girl)} 💗</div><div class="pk"></div><div class="flap"></div><b class="seal">💗</b></div><p class="hint">Tap the envelope</p><div class="paper rise" hidden></div>`,
+  i:e=>{const v=e.querySelector('.env'),pp=e.querySelector('.paper'),hint=e.querySelector('.hint');const open=()=>{if(v.classList.contains('open'))return;v.classList.add('open');burst(innerWidth/2,innerHeight/2,25,1);setTimeout(()=>{v.style.display='none';hint.hidden=true;pp.hidden=false;tw(pp,d.loveletter,32,()=>setTimeout(()=>adv(e),4500))},1600)};v.onclick=open;setTimeout(open,3500)}},
+ {h:`<h2 class="rise">Make a wish, ${esc(d.girl)}</h2><div class="cake rise" style="--i:1"><div class="cd">${'<i><u></u></i>'.repeat(5)}</div><div class="l1"></div><div class="l2"></div></div><button class="b rise" style="--i:2;width:auto" id="blow">Blow the candles 💨</button><p class="t" hidden></p>`,
+  i:e=>{const b=e.querySelector('#blow');const blow=()=>{if(b.hidden)return;e.querySelector('.cd').classList.add('out');b.hidden=true;burst(innerWidth/2,innerHeight/3,60);rain(60);const t=e.querySelector('.t');t.hidden=false;tw(t,d.wishes,28,()=>setTimeout(()=>adv(e),3500))};b.onclick=blow;setTimeout(blow,4500)}},
+ {h:`<h2 class="rise">Pop the hearts 💗</h2><div class="hg">${HM.map((m,k)=>`<span class="hh rise" style="--i:${k}">♥</span>`).join('')}</div><div class="msg rise" style="--i:3">Tap a heart…</div>`,
+  i:e=>{const hs=[...e.querySelectorAll('.hh')],m=e.querySelector('.msg'),np=()=>hs.filter(h=>!h.classList.contains('pop'));const open=k=>{const h=hs[k];if(h.classList.contains('pop'))return;h.classList.add('pop');const r=h.getBoundingClientRect();burst(r.x+r.width/2,r.y+r.height/2,24,1);m.textContent=HM[k]};const bump=flow(e,()=>np().length,()=>open(hs.indexOf(np()[0])),4500,3500);hs.forEach((h,k)=>h.onclick=()=>{open(k);bump()})}},
+ {h:`<h2 class="rise">Just for you 🔒</h2><div class="lock rise">🔐</div><div class="sec"></div><button class="b" style="width:auto" id="unl">Unlock the first secret</button>`,
+  i:e=>{let n=0;const b=e.querySelector('#unl'),s=e.querySelector('.sec');const un=()=>{if(n>=LT.length)return;if(!n)e.querySelector('.lock').textContent='💖';const p=document.createElement('p');p.textContent=LT[n++];s.append(p);burst(innerWidth/2,innerHeight/2,15,1);p.scrollIntoView({behavior:'smooth',block:'center'});if(n>=LT.length)b.hidden=true;else b.textContent='Unlock the next secret'};const bump=flow(e,()=>LT.length-n,un,5500,4000);b.onclick=()=>{un();bump()}}},
+ {h:`<h2 class="rise">Close your eyes…</h2><p class="t rise" style="--i:1;min-height:0">…make a wish, then tap the sky ✨</p><div style="font-size:90px" class="rise bob">🌠</div>`,
+  i:e=>{const iv=setInterval(()=>{if(!e.isConnected)return clearInterval(iv);if(slides[cur]&&slides[cur].e==e)burst(Math.random()*W,Math.random()*H*.6+40,45)},1100);e.onclick=ev=>burst(ev.clientX,ev.clientY,60);setTimeout(()=>adv(e),9500)}},
+ {h:`<h1 class="big rise">${esc(d.heading)}</h1><div class="sc rise" style="--i:1"><div class="orb" style="--s:${360/Math.max(d.photos.length,6)}deg">${Array.from({length:Math.max(d.photos.length,6)},(_,k)=>`<div style="--k:${k};${ph(k)?`background-image:url(${ph(k)})`:''}">${em(k)}</div>`).join('')}</div></div><p class="t rise" style="--i:2"></p><p class="hd rise" style="--i:3;font-size:30px">Forever yours, ${esc(d.boy)} 💗</p><button class="b alt" style="width:auto" id="re">Replay 🔁</button>`,
+  i:e=>{tw(e.querySelector('.t'),d.finalText,35);rain(80);const iv=setInterval(()=>{if(!e.isConnected)return clearInterval(iv);slides[cur]&&slides[cur].e==e&&rain(25)},2500);e.querySelector('#re').onclick=()=>play(LD,preview)}}
+ ]}
+function go(n){cur=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,k)=>{s.e.classList.toggle('on',k==cur);s.e.classList.toggle('past',k<cur);if(k==cur&&!s.done){s.done=1;s.i&&s.i(s.e)}});[...$('#dots').children].forEach((x,k)=>x.classList.toggle('on',k==cur))}
+function play(d,pv){LD=d;preview=pv;const t=TH[d.theme]||TH["Pink Princess"];P.style.cssText=`--a:${t[0]};--b:${t[1]};--c:${t[2]};--ink:${t[3]}`;
+ stage.innerHTML='';slides=mk(d).map(s=>{const e=document.createElement('section');e.className='slide';e.innerHTML=s.h;stage.append(e);return{e,i:s.i,done:0}});
+ $('#dots').innerHTML=slides.map(()=>'<i></i>').join('');P.classList.add('open');document.body.style.overflow='hidden';
+ if(d.song){au.src=d.song;au.currentTime=0}else au.removeAttribute('src');
+ clearInterval(amb);amb=setInterval(()=>ps.push({x:Math.random()*W,y:H+20,vx:(Math.random()-.5),vy:-1-Math.random(),g:0,dl:.003,l:1.5,e:1,c:'💗',s:8+Math.random()*10}),700);go(0)}
+function stop(){P.classList.remove('open');document.body.style.overflow='';au.pause();clearInterval(amb)}
+$('#next').onclick=()=>go(cur+1);$('#prev').onclick=()=>go(cur-1);addEventListener('keydown',e=>{if(!P.classList.contains('open'))return;if(e.key=='ArrowRight')go(cur+1);if(e.key=='ArrowLeft')go(cur-1)});
+let sx=null;stage.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});stage.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>70)go(cur+(dx<0?1:-1))});
+stage.addEventListener('click',e=>burst(e.clientX,e.clientY,6,1));
+$('#mute').onclick=()=>{au.muted=!au.muted;$('#mute').textContent=au.muted?'🔇':'🔊'};
+/* builder */
+function shrink(f){return new Promise(r=>{const i=new Image,u=URL.createObjectURL(f);i.onload=()=>{const k=Math.min(1,900/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL('image/jpeg',.82))};i.onerror=()=>r(null);i.src=u})}
+const rd=f=>new Promise(r=>{const x=new FileReader;x.onload=()=>r(x.result);x.readAsDataURL(f)});
+function data(song){const o=Object.fromEntries([...new FormData($('#projectForm'))].filter(([k,v])=>typeof v=='string'));o.photos=S.photos;o.song=song;return o}
+async function exportFile(){const d=data(S.song?await rd(S.song):null),c=document.documentElement.cloneNode(true);
+ c.querySelector('#giftdata').textContent=JSON.stringify(d).replace(/</g,'\\u003c');c.querySelector('#builder').remove();c.querySelector('#done').remove();
+ c.querySelector('#stage').innerHTML='';c.querySelector('#player').className='';c.querySelector('#player').removeAttribute('style');c.querySelector('#thumbs')&&0;
+ const z=c.querySelector('script[src*=razorpay]');z&&z.remove();c.querySelector('#au').removeAttribute('src');
+ return'<!doctype html>\n'+c.outerHTML}
+function done(url){stop();$('#builder').hidden=true;const e=$('#done');e.hidden=false;
+ e.innerHTML=`<h2>🎉 Payment received — your surprise is ready!</h2>`+(url?`<p>Send this private link to ${esc($('[name=girl]').value)}:</p><p class="link">${esc(url)}</p><button class="b" id="cp">Copy link</button>`:`<p>Download her gift file and send it on WhatsApp, Telegram or email. She just opens it, taps “Open your gift”, and the song plays through every slide.</p><button class="b" id="dl">⬇ Download gift file</button>`)+`<button class="b alt" id="again">Make another</button>`;
+ if(url)$('#cp').onclick=()=>navigator.clipboard.writeText(url);else $('#dl').onclick=async ev=>{ev.target.textContent='Packing photos & song…';const b=new Blob([await exportFile()],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='birthday-for-'+($('[name=girl]').value||'her').replace(/\W+/g,'-')+'.html';a.click();ev.target.textContent='⬇ Download again'};
+ $('#again').onclick=()=>location.reload()}
+async function pay(){const b=$('#pay');b.disabled=true;
+ try{
+  if(CFG.USE_SERVER){const r=await fetch("/api/create-order",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"}),o=await r.json();if(!r.ok)throw Error(o.error||"Could not start payment.");
+   new Razorpay({key:o.keyId,amount:o.amount,currency:o.currency,order_id:o.orderId,name:o.businessName,description:"Personalized birthday website",
+    handler:async p=>{try{const v=await fetch("/api/verify-payment",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)}),x=await v.json();if(!v.ok)throw Error(x.error||"Verification failed.");done()}catch(er){alert(er.message);b.disabled=false}},
+    modal:{ondismiss:()=>b.disabled=false}}).open()}
+  else if(CFG.RAZORPAY_KEY){new Razorpay({key:CFG.RAZORPAY_KEY,amount:CFG.AMOUNT_INR*100,currency:"INR",name:CFG.BUSINESS,description:"Personalized birthday website",handler:()=>done(),modal:{ondismiss:()=>b.disabled=false}}).open()}
+  else{if(confirm("DEMO MODE: no Razorpay key is set in CFG. Simulate a successful payment?"))done();else b.disabled=false}
+ }catch(err){alert(err.message);b.disabled=false}}
+const G=JSON.parse($('#giftdata').textContent||'null');
+if(G){document.documentElement.classList.add('viewer');play(G,false)}
+else{
+ $('#photos').onchange=async e=>{S.photos=(await Promise.all([...e.target.files].slice(0,8).map(shrink))).filter(Boolean);$('#thumbs').innerHTML=S.photos.map(s=>`<img src="${s}">`).join('')};
+ $('#song').onchange=e=>{const f=e.target.files[0];if(f&&f.size>12e6){alert('Song must be under 12 MB.');e.target.value='';S.song=null;return}S.song=f};
+ $('#previewBtn').onclick=()=>{if(!$('#projectForm').reportValidity())return;play(data(S.song?URL.createObjectURL(S.song):null),true)};
+ $('#edit').onclick=stop;$('#pay').onclick=pay;
+}
+</script>
+</body></html>
